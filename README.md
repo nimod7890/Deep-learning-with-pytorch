@@ -1,11 +1,12 @@
 ## 만들면서 배우는 파이토치 딥러닝
 
-```conda activate pytorchDeepLearning```
 ---
 
 ### 목차
 
 1. [공부중] Image Classification and Transfer Learning（VGG）
+    - image_classification.ipynb
+    - transfer_learning.ipynb
 2. [예정] Object Detection（SSD）
 3. [예정] Sementic Segmentation（PSPNet）
 4. [예정] Pose Estimation（OpenPose）
