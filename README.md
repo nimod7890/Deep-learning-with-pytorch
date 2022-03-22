@@ -1,7 +1,5 @@
 ## 만들면서 배우는 파이토치 딥러닝
 
----
-
 ### 목차
 
 1. [공부중] Image Classification and Transfer Learning（VGG）
