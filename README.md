@@ -10,6 +10,7 @@
     - [data_dataloader.ipynb](/2_objectdetection/1-dataset_dataloader.ipynb)
     - [model_forward.ipynb](/2_objectdetection/2-model_forward.ipynb)
     - [loss_function.ipynb](/2_objectdetection/3-loss_function.ipynb)
+    - [training.ipynb](/2_objectdetection/4-training.ipynb)
 3. [예정] Sementic Segmentation（PSPNet）
 4. [예정] Pose Estimation（OpenPose）
 5. [예정] GAN/Image Generating（DCGAN、Self-Attention GAN）
