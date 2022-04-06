@@ -389,10 +389,6 @@ class Detect(Function):
                 #신뢰도 기준 통과한 bounding box 인덱스 마스킹
                 c_mask=conf_scores[cl].gt(self.conf_thresh) #gt: greater than(넘으면 1, 못넘으면 0)
                 scores=conf_scores[cl][c_mask] # bounding box 수 (?)
-                print(cl)
-                print(c_mask)
-                print(scores)
-                print()
                 if scores.nelement()==0:  
                     continue
                 l_mask=c_mask.unsqueeze(1).expand_as(decoded_boxes) #decoded box에 맞게 크기 조정
@@ -440,7 +436,7 @@ class SSD(nn.Module):
         
         for (x,l,c) in zip(sources,self.loc,self.conf):
             loc.append(l(x).permute(0,2,3,1).contiguous())
-            conf.append(c(x).permutae(0,2,3,1).contiguous())
+            conf.append(c(x).permute(0,2,3,1).contiguous())
             #permute: 두개 이상의 차원 순서 교체
             #contiguous: 메모리상에서 연속적으로 존재하도록 함 (view 사용위해서 필요)
         loc=torch.cat([o.view(o.size(0),-1)for o in loc],1)
@@ -472,7 +468,7 @@ class MultiBoxLoss(nn.Module):
 
         #init
         conf_t_label=torch.LongTensor(num_batch,num_dbox).to(self.device) #label
-        loc_t=torch.Tensor(num_batch,num_dbox).to(self.device) #location 
+        loc_t=torch.Tensor(num_batch,num_dbox,4).to(self.device) #location 
 
         for idx in range(num_batch):
             # 현재 minibatch의 정답 annotation 
@@ -507,6 +503,7 @@ class MultiBoxLoss(nn.Module):
 
         # (1) if object detect(label > 1), loss will be 0
         num_pos=pos_mask.long().sum(1,keepdim=True) #object class의 예측 수 for each minibatch
+        loss_c=loss_c.view(num_batch,-1)
         loss_c[pos_mask]=0 
 
 

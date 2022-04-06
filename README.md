@@ -10,7 +10,9 @@
     - [data_dataloader.ipynb](/2_objectdetection/1-dataset_dataloader.ipynb)
     - [model_forward.ipynb](/2_objectdetection/2-model_forward.ipynb)
     - [loss_function.ipynb](/2_objectdetection/3-loss_function.ipynb)
+    - [ssd_model.py(modularize class, function)](/2_objectdetection/ssd_model.py)
     - [training.ipynb](/2_objectdetection/4-training.ipynb)
+    - [training_output.csv](/2_objectdetection/log_output.csv)
     - [inference.ipynb](/2_objectdetection/5-inference.ipynb)
 3. [예정] Sementic Segmentation（PSPNet）
 4. [예정] Pose Estimation（OpenPose）
