@@ -7,8 +7,10 @@ import matplotlib.pyplot as plt
 import cv2  # OpenCVライブラリ
 import torch
 
-from utils.ssd_model import DataTransform
-
+import os.path 
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname('__file__'))))
+from ssd_model import dataTransform
 
 class SSDPredictShow():
     """SSDでの予測と画像の表示をまとめて行うクラス"""
@@ -19,7 +21,7 @@ class SSDPredictShow():
 
         color_mean = (104, 117, 123)  # (BGR)の色の平均値
         input_size = 300  # 画像のinputサイズを300×300にする
-        self.transform = DataTransform(input_size, color_mean)  # 前処理クラス
+        self.transform = dataTransform(input_size, color_mean)  # 前処理クラス
 
     def show(self, image_file_path, data_confidence_level):
         """

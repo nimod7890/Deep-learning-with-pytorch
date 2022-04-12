@@ -300,8 +300,9 @@ class DBox(object):
 def decode(loc,dbox_list):
     boxes=torch.cat((
         dbox_list[:,:2]+loc[:,:2]*0.1*dbox_list[:,2:],
-        dbox_list[:,2:]*torch.exp(loc[:,2:]*0.2,dim=1)
-    ))
+        dbox_list[:,2:]*torch.exp(loc[:,2:]*0.2)),
+        dim=1
+    )
     boxes[:,:2]-=boxes[:,2:]/2 #(cx, cy)->(xmin,ymin)
     boxes[:,2:]+=boxes[:,:2] #(w,h)->(xmax,ymax)
     
@@ -320,7 +321,7 @@ def nm_suppression(boxes,scores,overlap=0.45,top_k=200):
     
     #bounding box 넓이  
     x1,y1,x2,y2=[boxes[:,i] for i in range(4)] 
-    area=torch.mul(x2-x1,y2,y1)
+    area=torch.mul(x2-x1,y2-y1)
 
     _x1,_y1,_x2,_y2,_w,_h=[boxes.new()]*6
     
@@ -341,7 +342,7 @@ def nm_suppression(boxes,scores,overlap=0.45,top_k=200):
             # 0-idx 사이 bounding box 정보를 _v에 저장
             torch.index_select(v,0,idx,out=_v) 
             #xmin,ymin,xmax, ymax 범위 제한
-            if _v==_x1 or _v==_y1:
+            if _v is _x1 or _v is _y1:
                 _v=torch.clamp(_v,min=v[max_idx]) 
             else: 
                 _v=torch.clamp(_v,max=v[max_idx]) 
@@ -373,11 +374,17 @@ class Detect(Function):
         self.conf_thresh=conf_thresh #신뢰도 기준
         self.top_k=top_k 
         self.nms_thresh=nms_thresh #IoU 기준
-
-    def forward(self,loc_data,conf_data,dbox_list):
+     
+    def forward(self,loc_data,conf_data,dbox_list,conf_thresh=0.01,top_k=200,nms_thresh=0.45):
+        self.softmax=nn.Softmax(dim=-1)
+        self.conf_thresh=conf_thresh #신뢰도 기준
+        self.top_k=top_k 
+        self.nms_thresh=nms_thresh #IoU 기준
+        
         num_batch=loc_data.size(0)
         # num_dbox=loc_data.size(1)
         num_classes=conf_data.size(2)
+
         conf_data=self.softmax(conf_data) #normalization
 
         output=torch.zeros(num_batch,num_classes,self.top_k,5) #init output init
@@ -394,7 +401,7 @@ class Detect(Function):
                 l_mask=c_mask.unsqueeze(1).expand_as(decoded_boxes) #decoded box에 맞게 크기 조정
                 boxes=decoded_boxes[l_mask].view(-1,4) #dimension (n) -> (n,4)
                 idx,count=nm_suppression(boxes,scores,self.nms_thresh,self.top_k) #중복 bbox 삭제
-                output[i,cl,:count]=torch.cat((scores[idx[:count]].unsqueeze(1).boxes[idx[:count]]),1)
+                output[i,cl,:count]=torch.cat((scores[idx[:count]].unsqueeze(1),boxes[idx[:count]]),1)
         return output
 
 
@@ -446,7 +453,8 @@ class SSD(nn.Module):
 
         output=(loc,conf,self.dbox_list)
         if self.phase=="inference":
-            return self.detect(output[i] for i in range(3))
+            return self.detect.apply(output[0],output[1],output[2])
+            #apply 안 쓰면 runtimeerror
         else: return output
 
 
