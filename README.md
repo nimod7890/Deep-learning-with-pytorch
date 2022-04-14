@@ -17,6 +17,7 @@
 3. [공부중] [Sementic Segmentation（PSPNet:Pyramid Scene Parsing Network）](/3_semantic_segmentation/)
     - [dataset_dataloader.ipynb](/3_semantic_segmentation/1-dataset_dataloader.ipynb)
     - [network_model.ipynb](/3_semantic_segmentation/2-network_model.ipynb)
+    - [training.ipynb](/3_semantic_segmentation/3-training.ipynb)
 4. [예정] Pose Estimation（OpenPose）
 5. [예정] GAN/Image Generating（DCGAN、Self-Attention GAN）
 6. [예정] GAN/Anomaly Detection（AnoGAN、Efficient GAN)
